@@ -50,16 +50,12 @@ with open("1_input", 'r') as input:
                     noclick=0
                 dial = 100+dial
         elif dial > 99:
-            while dial > 99:
-                # Extra click in this case
-                if dial != 100 and noclick == 0:
-                    click += 1
-                    print("click")
-                elif noclick==1:
-                    print("will click")
-                    noclick=0
-                dial = dial-100
-                print(f"dial is {dial}")
+            if dial != 100:
+                rotations = dial//100
+                click+=rotations
+                print(f"{rotations} cliks")
+            dial = dial%100
+            print(f"dial is {dial}")
         if dial == 0:
             result +=1
         print(f"Dial {dial}")
