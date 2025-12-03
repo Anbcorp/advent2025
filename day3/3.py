@@ -5,32 +5,36 @@ import sys
 
 fname = sys.argv[1]
 with open(fname, 'r') as input:
+    total = 0
     for line in input.readlines():
-        indexes = []
+        i = []
         line = line.strip()
-        workline = list(copy.copy(line))
-        indexes.append(line.index(max(workline)))
-        # This changes the indexes and create off by one error
-        workline.pop(indexes[-1])
-        indexes.append(line.index(max(workline)))
-        si = sorted(indexes)
-        if line[si[1]] > line[si[0]]:
-            """ Try to find another maximum starting after si[1] """
-            try:
-                nm = max(line[si[1]+1])
-                print(f"{si[1]+1} is {line[si[1]+1]}")
-            except IndexError:
-                # Already at max, continue
-                pass
-            else:
-                si[0]=si[1]
-                si[1] = line.index(nm)
+        print(f"line is {line}")
+        m = max(line)
+        mi = line.index(m)
+        print(f"  max is {m} at {mi}")
+        i.append(mi)
+        if i[0] == len(line)-1:
+            print(f"  max is last")
+            m = max(line[:-1])
+            mi = line.index(m)
+            print(f"    othermax is {m} at {mi}")
+            # Reverse order
+            i.append(i[0])
+            i[0] = mi
+        else:
+            print(f"  max is somewhere")
+            m = max(line[i[0]+1:])
+            mi = line[i[0]+1:].index(m)
+            # Can't use line[i[0]+1:] index in line directly, rebase index
+            mi += i[0]+1
+            print(f"    othermax is {m} at {mi}")
+            i.append(mi)
 
-        print(line[si[0]], line[si[1]])
+        total+= int(line[i[0]]+line[i[1]])
+        print(f"{line[i[0]]}{line[i[1]]} total is {total}")
 
 
-        """ If i2 > i1, look for next maximum after i2, unless i2 == length
-        """
 """
 New approach :
 Find max.
