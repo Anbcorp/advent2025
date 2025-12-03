@@ -96,24 +96,6 @@ def find_answer(line):
 
     return [v for v in out_line if v]
 
-
-def get_next_digit(seq, res_len, rel_pos):
-    m = max(seq)
-    mi = seq.index(m)
-    print(f"  max is {m} at {mi}")
-    # Special where we have to keep all remaining digits
-    if len(seq[mi:]) == res_len:
-        return seq[mi:]
-
-    if len(seq[mi:]) > res_len:
-        # Keep it as first digit, we will find other in the rest of the seq
-        get_next_digit(seq[mi+1:], res_len-1, mi)
-
-    else:
-        # we cannot find all remaining digits in the remaining seq
-        # Keep it and start again
-        pass # this is goind nowhere
-
 def part1(fname):
     total = 0
     for line in input.readlines():
@@ -145,12 +127,54 @@ def part1(fname):
         total+= int(line[i[0]]+line[i[1]])
         print(f"{line[i[0]]}{line[i[1]]} total is {total}")
 
+"""
+Trying another idea
+
+look for 10^n digit
+it is the max located in the first len-n digit
+    actually its len-n+1
+then the 10^n-1
+max in the len-n-1 slice starting at index of previous+1
+rince repeat
+when the slice remaining == n-x, fill out
+
+pseudo:
+l is length of remaining input
+n is the length of answer remaining to find
+s is the slice length, it's l-n+1
+
+pos=0
+while n>0 and l>n
+ take max from input[pos:pos+s]
+ pos = input.index(max)+1
+ answer.append(max)
+int(join(answer))
+"""
+
+def day3(line, n):
+    pos=0
+    ans=[]
+    l=len(line)
+    while n>0:
+        s=l-n+1
+        m = max(line[pos:pos+s])
+        mi = line[pos:].index(m)+pos
+        ans.append(m)
+        pos = mi+1
+        n-=1
+        l=len(line[pos:])
+        # no digit to eliminate remains, take it all
+        if l==n:
+            ans.append(line[pos:])
+            break
+    return ''.join(ans)
+
 
 fname = sys.argv[1]
 with open(fname, 'r') as input:
     total = 0
     for line in input.readlines():
-        res = find_answer(line.strip())
+        res = day3(line.strip(), 12)
         ires = int(''.join(res))
         print(f"{ires} - {len(res)}")
         total += ires
